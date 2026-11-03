@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": ["routeTree.gen.ts"],
+  "plugins": [
+    "eslint",
+    "import",
+    "jsdoc",
+    "oxc",
+    "promise",
+    "react",
+    "typescript",
+    "unicorn"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  },
+  "rules": {
+    "import/consistent-type-specifier-style": "error",
+    "import/no-cycle": "error",
+    "import/no-duplicates": "error",
+    "react/exhaustive-deps": "error",
+    "react/rules-of-hooks": "error",
+    "react/invariant": "error",
+    "react/unsupported-syntax": "error",
+    "react/jsx-filename-extension": [
+      "error",
+      { "allow": "as-needed", "extensions": ["jsx", "tsx"] }
+    ],
+    "typescript/consistent-type-exports": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-import-type-side-effects": "error",
+    "unicorn/custom-error-definition": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/test/**", "**/*.test.ts", "**/*.test-d.ts"],
+      "plugins": ["vitest"],
+      "rules": {
+        "vitest/consistent-test-it": ["error", { "withinDescribe": "test" }]
+      }
+    }
+  ]
+}

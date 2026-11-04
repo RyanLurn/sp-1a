@@ -28,3 +28,10 @@ export const ChatMessageStepStartPartSchema = z.object({
 export type ChatMessageStepStartPart = z.infer<
   typeof ChatMessageStepStartPartSchema
 >;
+
+export const ChatMessagePartSchema = z.discriminatedUnion("type", [
+  ChatMessageTextPartSchema,
+  ChatMessageReasoningPartSchema,
+  ChatMessageStepStartPartSchema,
+]);
+export type ChatMessagePart = z.infer<typeof ChatMessagePartSchema>;

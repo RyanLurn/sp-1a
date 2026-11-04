@@ -21,3 +21,10 @@ export const ChatMessageReasoningPartSchema = z.object({
 export type ChatMessageReasoningPart = z.infer<
   typeof ChatMessageReasoningPartSchema
 >;
+
+export const ChatMessageStepStartPartSchema = z.object({
+  type: z.literal("step-start"),
+});
+export type ChatMessageStepStartPart = z.infer<
+  typeof ChatMessageStepStartPartSchema
+>;

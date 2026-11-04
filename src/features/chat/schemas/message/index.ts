@@ -21,8 +21,5 @@ export const ChatMessageSchema = z.object({
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
-export const NewChatMessageSchema = ChatMessageSchema.omit({
-  id: true,
-  threadId: true,
-});
+export const NewChatMessageSchema = ChatMessageSchema.omit({ id: true });
 export type NewChatMessage = z.infer<typeof NewChatMessageSchema>;

@@ -10,3 +10,14 @@ export const ChatMessageTextPartSchema = z.object({
   state: ChatMessageStreamStateSchema.exactOptional(),
 });
 export type ChatMessageTextPart = z.infer<typeof ChatMessageTextPartSchema>;
+
+export const ChatMessageReasoningPartSchema = z.object({
+  type: z.literal("reasoning"),
+  id: z.string().exactOptional(),
+  text: z.string(),
+  state: ChatMessageStreamStateSchema.exactOptional(),
+  providerMetadata: z.record(z.string(), z.any()).exactOptional(),
+});
+export type ChatMessageReasoningPart = z.infer<
+  typeof ChatMessageReasoningPartSchema
+>;

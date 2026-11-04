@@ -3,6 +3,8 @@ import { z } from "zod";
 import type { ChatMessageId } from "@/features/chat/types";
 
 import { CHAT_MESSAGE_ROLE_ENUM } from "@/features/chat/constants";
+import { ChatMessagePartsSchema } from "@/features/chat/schemas/message/parts";
+import { ChatThreadIdSchema } from "@/features/chat/schemas/thread";
 
 export const ChatMessageIdSchema = z
   .uuidv7()
@@ -10,3 +12,11 @@ export const ChatMessageIdSchema = z
 
 export const ChatMessageRoleSchema = z.enum(CHAT_MESSAGE_ROLE_ENUM);
 export type ChatMessageRole = z.infer<typeof ChatMessageRoleSchema>;
+
+export const ChatMessageSchema = z.object({
+  id: ChatMessageIdSchema,
+  role: ChatMessageRoleSchema,
+  parts: ChatMessagePartsSchema,
+  threadId: ChatThreadIdSchema,
+});
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;

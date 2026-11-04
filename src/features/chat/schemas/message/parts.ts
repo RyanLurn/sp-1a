@@ -35,3 +35,6 @@ export const ChatMessagePartSchema = z.discriminatedUnion("type", [
   ChatMessageStepStartPartSchema,
 ]);
 export type ChatMessagePart = z.infer<typeof ChatMessagePartSchema>;
+
+export const ChatMessagePartsSchema = z.array(ChatMessagePartSchema);
+export type ChatMessageParts = z.infer<typeof ChatMessagePartsSchema>;

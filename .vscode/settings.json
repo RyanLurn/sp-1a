@@ -31,5 +31,6 @@
     "cva"
   ],
   "tailwindCSS.lint.suggestCanonicalClasses": "ignore",
-  "js/ts.experimental.useTsgo": true
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "node_modules/typescript"
 }

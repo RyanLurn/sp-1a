@@ -1,10 +1,14 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { index, jsonb, pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
 
-import type { ChatThreadId } from "@/features/chat/types";
+import type { ChatMessageParts } from "@/features/chat/schemas/message/parts";
+import type { ChatMessageId, ChatThreadId } from "@/features/chat/types";
 
 import { id } from "@/db/helpers/id";
 import { timestamps } from "@/db/helpers/timestamps";
-import { NEW_CHAT_TITLE } from "@/features/chat/constants";
+import {
+  CHAT_MESSAGE_ROLE_ENUM,
+  NEW_CHAT_TITLE,
+} from "@/features/chat/constants";
 
 export const chatThreadTable = pgTable("chat_threads", {
   id: id.$type<ChatThreadId>(),
@@ -13,3 +17,20 @@ export const chatThreadTable = pgTable("chat_threads", {
 });
 export type SelectedChatThread = typeof chatThreadTable.$inferSelect;
 export type InsertedChatThread = typeof chatThreadTable.$inferInsert;
+
+export const chatMessageTable = pgTable(
+  "chat_messages",
+  {
+    id: id.$type<ChatMessageId>(),
+    role: pgEnum("role", CHAT_MESSAGE_ROLE_ENUM)().notNull(),
+    parts: jsonb().notNull().$type<ChatMessageParts>(),
+    threadId: uuid("thread_id")
+      .notNull()
+      .references(() => chatThreadTable.id, { onDelete: "cascade" })
+      .$type<ChatThreadId>(),
+    ...timestamps,
+  },
+  (table) => [index("thread_id_index").on(table.threadId)],
+);
+export type SelectedChatMessage = typeof chatMessageTable.$inferSelect;
+export type InsertedChatMessage = typeof chatMessageTable.$inferInsert;

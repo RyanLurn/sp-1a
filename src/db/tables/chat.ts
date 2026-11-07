@@ -18,11 +18,15 @@ export const chatThreadTable = pgTable("chat_threads", {
 export type SelectedChatThread = typeof chatThreadTable.$inferSelect;
 export type InsertedChatThread = typeof chatThreadTable.$inferInsert;
 
+export const chatMessageRoleEnum = pgEnum(
+  "chat_message_role",
+  CHAT_MESSAGE_ROLE_ENUM,
+);
 export const chatMessageTable = pgTable(
   "chat_messages",
   {
     id: id.$type<ChatMessageId>(),
-    role: pgEnum("role", CHAT_MESSAGE_ROLE_ENUM)().notNull(),
+    role: chatMessageRoleEnum().notNull(),
     parts: jsonb("parts").notNull().$type<ChatMessageParts>(),
     threadId: uuid("thread_id")
       .notNull()

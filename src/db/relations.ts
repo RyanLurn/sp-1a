@@ -15,6 +15,7 @@ export const relations = defineRelations(
       thread: one.chatThreads({
         from: chatMessages.threadId,
         to: chatThreads.id,
+        optional: false,
       }),
     },
   }),

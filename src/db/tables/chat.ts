@@ -34,7 +34,7 @@ export const chatMessageTable = pgTable(
       .$type<ChatThreadId>(),
     ...timestamps,
   },
-  (table) => [index("thread_id_index").on(table.threadId)],
+  (table) => [index("chat_messages_thread_id_idx").on(table.threadId)],
 );
 export type SelectedChatMessage = typeof chatMessageTable.$inferSelect;
 export type InsertedChatMessage = typeof chatMessageTable.$inferInsert;

@@ -11,3 +11,4 @@ export const ChatThreadSchema = z.object({
   id: ChatThreadIdSchema,
   title: NonEmptyStringSchema,
 });
+export type ChatThread = z.infer<typeof ChatThreadSchema>;

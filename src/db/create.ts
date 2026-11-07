@@ -6,6 +6,7 @@ import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { succeed } from "@little-nebulae/result";
 import { wrapZodResult } from "@little-nebulae/zod";
 import { neon } from "@neondatabase/serverless";
+import { createServerOnlyFn } from "@tanstack/react-start";
 import { drizzle } from "drizzle-orm/neon-http";
 import { z } from "zod";
 
@@ -30,19 +31,21 @@ const DbEnvSchema = z.object({
 });
 type DbEnv = z.infer<typeof DbEnvSchema>;
 
-export function createDb(): Result<
-  NeonHttpDatabase<typeof relations> & {
-    $client: NeonQueryFunction<false, false>;
-  },
-  ZodParseError<DbEnv>
-> {
-  const parseEnvResult = wrapZodResult(DbEnvSchema.safeParse(process.env));
-  if (!parseEnvResult.success) {
-    return parseEnvResult;
-  }
-  const { NEON_POOLED_CONNECTION_STRING } = parseEnvResult.data;
+export const createDb = createServerOnlyFn(
+  (): Result<
+    NeonHttpDatabase<typeof relations> & {
+      $client: NeonQueryFunction<false, false>;
+    },
+    ZodParseError<DbEnv>
+  > => {
+    const parseEnvResult = wrapZodResult(DbEnvSchema.safeParse(process.env));
+    if (!parseEnvResult.success) {
+      return parseEnvResult;
+    }
+    const { NEON_POOLED_CONNECTION_STRING } = parseEnvResult.data;
 
-  const client = neon(NEON_POOLED_CONNECTION_STRING);
-  const db = drizzle({ client, relations });
-  return succeed(db);
-}
+    const client = neon(NEON_POOLED_CONNECTION_STRING);
+    const db = drizzle({ client, relations });
+    return succeed(db);
+  },
+);

@@ -23,7 +23,7 @@ export const chatMessageTable = pgTable(
   {
     id: id.$type<ChatMessageId>(),
     role: pgEnum("role", CHAT_MESSAGE_ROLE_ENUM)().notNull(),
-    parts: jsonb().notNull().$type<ChatMessageParts>(),
+    parts: jsonb("parts").notNull().$type<ChatMessageParts>(),
     threadId: uuid("thread_id")
       .notNull()
       .references(() => chatThreadTable.id, { onDelete: "cascade" })

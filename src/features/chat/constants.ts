@@ -1,3 +1,5 @@
+export const NEW_CHAT_TITLE = "New chat";
+
 export const CHAT_MESSAGE_ROLE_ENUM = {
   SYSTEM: "system",
   USER: "user",

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from "./routes/__root";
 import { Route as IndexRouteImport } from "./routes/index";
+import { Route as ChatChar123ThreadIdChar125RouteRouteImport } from "./routes/chat/{-$threadId}/route";
 import { Route as ChatChar123ThreadIdChar125IndexRouteImport } from "./routes/chat/{-$threadId}/index";
 
 const IndexRoute = IndexRouteImport.update({
@@ -17,15 +18,22 @@ const IndexRoute = IndexRouteImport.update({
   path: "/",
   getParentRoute: () => rootRouteImport,
 } as any);
+const ChatChar123ThreadIdChar125RouteRoute =
+  ChatChar123ThreadIdChar125RouteRouteImport.update({
+    id: "/chat/{-$threadId}",
+    path: "/chat/{-$threadId}",
+    getParentRoute: () => rootRouteImport,
+  } as any);
 const ChatChar123ThreadIdChar125IndexRoute =
   ChatChar123ThreadIdChar125IndexRouteImport.update({
-    id: "/chat/{-$threadId}/",
-    path: "/chat/{-$threadId}/",
-    getParentRoute: () => rootRouteImport,
+    id: "/",
+    path: "/",
+    getParentRoute: () => ChatChar123ThreadIdChar125RouteRoute,
   } as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
+  "/chat/{-$threadId}": typeof ChatChar123ThreadIdChar125RouteRouteWithChildren;
   "/chat/{-$threadId}/": typeof ChatChar123ThreadIdChar125IndexRoute;
 }
 export interface FileRoutesByTo {
@@ -35,19 +43,20 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   "/": typeof IndexRoute;
+  "/chat/{-$threadId}": typeof ChatChar123ThreadIdChar125RouteRouteWithChildren;
   "/chat/{-$threadId}/": typeof ChatChar123ThreadIdChar125IndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/chat/{-$threadId}/";
+  fullPaths: "/" | "/chat/{-$threadId}" | "/chat/{-$threadId}/";
   fileRoutesByTo: FileRoutesByTo;
   to: "/" | "/chat/{-$threadId}";
-  id: "__root__" | "/" | "/chat/{-$threadId}/";
+  id: "__root__" | "/" | "/chat/{-$threadId}" | "/chat/{-$threadId}/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
-  ChatChar123ThreadIdChar125IndexRoute: typeof ChatChar123ThreadIdChar125IndexRoute;
+  ChatChar123ThreadIdChar125RouteRoute: typeof ChatChar123ThreadIdChar125RouteRouteWithChildren;
 }
 
 declare module "@tanstack/react-router" {
@@ -59,19 +68,41 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/chat/{-$threadId}": {
+      id: "/chat/{-$threadId}";
+      path: "/chat/{-$threadId}";
+      fullPath: "/chat/{-$threadId}";
+      preLoaderRoute: typeof ChatChar123ThreadIdChar125RouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/chat/{-$threadId}/": {
       id: "/chat/{-$threadId}/";
-      path: "/chat/{-$threadId}";
+      path: "/";
       fullPath: "/chat/{-$threadId}/";
       preLoaderRoute: typeof ChatChar123ThreadIdChar125IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
+      parentRoute: typeof ChatChar123ThreadIdChar125RouteRoute;
     };
   }
 }
 
+interface ChatChar123ThreadIdChar125RouteRouteChildren {
+  ChatChar123ThreadIdChar125IndexRoute: typeof ChatChar123ThreadIdChar125IndexRoute;
+}
+
+const ChatChar123ThreadIdChar125RouteRouteChildren: ChatChar123ThreadIdChar125RouteRouteChildren =
+  {
+    ChatChar123ThreadIdChar125IndexRoute: ChatChar123ThreadIdChar125IndexRoute,
+  };
+
+const ChatChar123ThreadIdChar125RouteRouteWithChildren =
+  ChatChar123ThreadIdChar125RouteRoute._addFileChildren(
+    ChatChar123ThreadIdChar125RouteRouteChildren,
+  );
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ChatChar123ThreadIdChar125IndexRoute: ChatChar123ThreadIdChar125IndexRoute,
+  ChatChar123ThreadIdChar125RouteRoute:
+    ChatChar123ThreadIdChar125RouteRouteWithChildren,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

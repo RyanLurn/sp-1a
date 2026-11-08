@@ -52,11 +52,11 @@ function ChatLayout() {
                             to="/chat/{-$threadId}"
                             params={{ threadId: thread.id }}
                             disabled={threadId === thread.id}
-                          >
-                            {thread.title}
-                          </Link>
+                          />
                         }
-                      />
+                      >
+                        <span>{thread.title}</span>
+                      </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>

@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarHeader,
@@ -15,7 +16,10 @@ function ChatLayout() {
     <SidebarProvider>
       <div className="flex h-full w-full">
         <Sidebar>
-          <SidebarHeader>AI Chat</SidebarHeader>
+          <SidebarHeader className="text-xl">AI Chat</SidebarHeader>
+          <div className="relative w-full p-2">
+            <Button className="w-full">New chat</Button>
+          </div>
         </Sidebar>
         <main className="flex-1">
           <Outlet />

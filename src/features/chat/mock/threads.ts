@@ -1,6 +1,8 @@
 import type { ChatThread } from "@/features/chat/schemas/thread";
 import type { ChatThreadId } from "@/features/chat/types";
 
+import { NEW_CHAT_TITLE } from "@/features/chat/constants";
+
 export const mockChatThreads: ChatThread[] = [
   {
     id: "thr_01HZX3K9A1" as ChatThreadId,
@@ -59,8 +61,8 @@ export const mockChatThreads: ChatThread[] = [
   },
   {
     id: "thr_01HZX3K9KA" as ChatThreadId,
-    title: "Untitled chat",
-    createdAt: new Date("2026-10-02T22:18:00Z"),
-    updatedAt: new Date("2026-10-02T22:18:00Z"),
+    title: NEW_CHAT_TITLE,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { cn } from "cn";
 
+import { RelativeTime } from "@/components/relative-time";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Sidebar,
@@ -53,6 +54,20 @@ function ChatLayout() {
                             params={{ threadId: thread.id }}
                           />
                         }
+                        tooltip={{
+                          children: (
+                            <div>
+                              <div>{thread.title}</div>
+                              <div className="opacity-70">
+                                Updated <RelativeTime date={thread.updatedAt} />
+                              </div>
+                              <div className="opacity-70">
+                                Created <RelativeTime date={thread.createdAt} />
+                              </div>
+                            </div>
+                          ),
+                          hidden: false,
+                        }}
                       >
                         <span>{thread.title}</span>
                       </SidebarMenuButton>

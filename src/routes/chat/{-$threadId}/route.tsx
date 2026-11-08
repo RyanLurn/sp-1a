@@ -51,7 +51,6 @@ function ChatLayout() {
                           <Link
                             to="/chat/{-$threadId}"
                             params={{ threadId: thread.id }}
-                            disabled={threadId === thread.id}
                           />
                         }
                       >

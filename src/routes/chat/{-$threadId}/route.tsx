@@ -1,6 +1,7 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { cn } from "cn";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarHeader,
@@ -18,7 +19,13 @@ function ChatLayout() {
         <Sidebar>
           <SidebarHeader className="text-xl">AI Chat</SidebarHeader>
           <div className="relative w-full p-2">
-            <Button className="w-full">New chat</Button>
+            <Link
+              to="/chat/{-$threadId}"
+              params={{ threadId: undefined }}
+              className={cn("w-full", buttonVariants())}
+            >
+              New chat
+            </Link>
           </div>
         </Sidebar>
         <main className="flex-1">

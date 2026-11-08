@@ -1,8 +1,8 @@
 export function formatRelativeTime({
-  then,
+  date,
   now = new Date(),
 }: {
-  then: Date;
+  date: Date;
   now?: Date;
 }): string {
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
@@ -17,7 +17,7 @@ export function formatRelativeTime({
     ["minute", 60],
   ];
 
-  const seconds = Math.round((then.getTime() - now.getTime()) / 1000);
+  const seconds = Math.round((date.getTime() - now.getTime()) / 1000);
 
   for (const [unit, secondsInUnit] of UNITS) {
     if (Math.abs(seconds) >= secondsInUnit) {

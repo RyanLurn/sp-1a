@@ -38,7 +38,7 @@ export function ChatPromptInput({
       }}
       {...props}
     >
-      <InputGroup>
+      <InputGroup className="bg-secondary dark:bg-secondary">
         <InputGroupTextarea
           value={text}
           onChange={(event) => setText(event.target.value)}

@@ -40,7 +40,7 @@ function AppShell({ children }: Readonly<{ children: ReactNode }>) {
         <ThemeProvider defaultTheme="system" storageKey="theme">
           <TooltipProvider>
             <ThemeToggle className="fixed top-3 right-3" />
-            <div className="h-screen">{children}</div>
+            <div className="h-dvh">{children}</div>
             <Toaster />
           </TooltipProvider>
         </ThemeProvider>

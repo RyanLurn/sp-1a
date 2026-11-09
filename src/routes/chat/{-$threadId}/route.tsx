@@ -26,62 +26,60 @@ function ChatLayout() {
   const { threadId } = Route.useParams();
   const threads = Route.useLoaderData();
   return (
-    <SidebarProvider>
-      <div className="flex h-full w-full">
-        <Sidebar>
-          <SidebarHeader className="text-xl">AI Chat</SidebarHeader>
-          <div className="relative w-full p-2">
-            <Link
-              to="/chat/{-$threadId}"
-              params={{ threadId: undefined }}
-              className={cn("w-full", buttonVariants())}
-            >
-              New chat
-            </Link>
-          </div>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Threads</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {threads.map((thread) => (
-                    <SidebarMenuItem key={thread.id}>
-                      <SidebarMenuButton
-                        isActive={threadId === thread.id}
-                        render={
-                          <Link
-                            to="/chat/{-$threadId}"
-                            params={{ threadId: thread.id }}
-                          />
-                        }
-                        tooltip={{
-                          children: (
-                            <div>
-                              <div>{thread.title}</div>
-                              <div className="opacity-70">
-                                Updated <RelativeTime date={thread.updatedAt} />
-                              </div>
-                              <div className="opacity-70">
-                                Created <RelativeTime date={thread.createdAt} />
-                              </div>
+    <SidebarProvider className="h-full">
+      <Sidebar>
+        <SidebarHeader className="text-xl">AI Chat</SidebarHeader>
+        <div className="relative w-full p-2">
+          <Link
+            to="/chat/{-$threadId}"
+            params={{ threadId: undefined }}
+            className={cn("w-full", buttonVariants())}
+          >
+            New chat
+          </Link>
+        </div>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Threads</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {threads.map((thread) => (
+                  <SidebarMenuItem key={thread.id}>
+                    <SidebarMenuButton
+                      isActive={threadId === thread.id}
+                      render={
+                        <Link
+                          to="/chat/{-$threadId}"
+                          params={{ threadId: thread.id }}
+                        />
+                      }
+                      tooltip={{
+                        children: (
+                          <div>
+                            <div>{thread.title}</div>
+                            <div className="opacity-70">
+                              Updated <RelativeTime date={thread.updatedAt} />
                             </div>
-                          ),
-                          hidden: false,
-                        }}
-                      >
-                        <span>{thread.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </Sidebar>
-        <main className="flex-1">
-          <Outlet />
-        </main>
-      </div>
+                            <div className="opacity-70">
+                              Created <RelativeTime date={thread.createdAt} />
+                            </div>
+                          </div>
+                        ),
+                        hidden: false,
+                      }}
+                    >
+                      <span>{thread.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <main className="flex-1">
+        <Outlet />
+      </main>
     </SidebarProvider>
   );
 }

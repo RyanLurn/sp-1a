@@ -34,4 +34,20 @@ export function ChatMessageBubble({
       </Message>
     );
   }
+
+  return (
+    <Message>
+      <MessageContent>
+        {chatMessage.parts.map((part) => {
+          if (part.type === "text") {
+            return (
+              <Bubble key={part.type} variant="ghost">
+                <BubbleContent>{part.text}</BubbleContent>
+              </Bubble>
+            );
+          }
+        })}
+      </MessageContent>
+    </Message>
+  );
 }

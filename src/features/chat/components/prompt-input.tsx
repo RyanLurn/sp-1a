@@ -1,9 +1,15 @@
 import type { ComponentProps } from "react";
 import type { Except } from "type-fest";
 
+import { ArrowUp } from "lucide-react";
 import { useRef, useState } from "react";
 
-import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from "@/components/ui/input-group";
 
 interface ChatPromptInputProps extends Except<
   ComponentProps<"form">,
@@ -45,6 +51,16 @@ export function ChatPromptInput({
           }}
           className="p-3"
         />
+        <InputGroupAddon align="block-end">
+          <InputGroupButton
+            type="submit"
+            size="icon-sm"
+            className="ml-auto rounded-full"
+            aria-label="Send"
+          >
+            <ArrowUp />
+          </InputGroupButton>
+        </InputGroupAddon>
       </InputGroup>
     </form>
   );

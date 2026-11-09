@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/message-scroller";
 import { ChatMessageThread } from "@/features/chat/components/message-thread";
 import { ChatPromptInput } from "@/features/chat/components/prompt-input";
-import { MOCK_CHAT_MESSAGES_CONTROL } from "@/features/chat/mock/messages/control";
+import { MOCK_CHAT_MESSAGES_MARKDOWN } from "@/features/chat/mock/messages/markdown";
 
 export const Route = createFileRoute("/chat/{-$threadId}/")({
-  loader: () => MOCK_CHAT_MESSAGES_CONTROL,
+  loader: () => MOCK_CHAT_MESSAGES_MARKDOWN,
   component: RouteComponent,
 });
 

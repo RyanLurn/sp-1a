@@ -3,6 +3,8 @@ import type { Except } from "type-fest";
 
 import { useRef, useState } from "react";
 
+import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
+
 interface ChatPromptInputProps extends Except<
   ComponentProps<"form">,
   "ref" | "onSubmit"
@@ -26,5 +28,22 @@ export function ChatPromptInput({
     setText("");
   }
 
-  return <form ref={formRef} onSubmit={handleSubmit} {...props}></form>;
+  return (
+    <form ref={formRef} onSubmit={handleSubmit} {...props}>
+      <InputGroup>
+        <InputGroupTextarea
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          placeholder="Enter your message..."
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              formRef.current?.requestSubmit();
+            }
+          }}
+          className="p-3"
+        ></InputGroupTextarea>
+      </InputGroup>
+    </form>
+  );
 }

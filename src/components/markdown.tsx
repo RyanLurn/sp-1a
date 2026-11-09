@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { Streamdown } from "streamdown";
 
 export function Markdown({
@@ -7,5 +8,5 @@ export function Markdown({
   text: string;
   className?: string;
 }) {
-  return <Streamdown className={className}>{text}</Streamdown>;
+  return <Streamdown className={cn("typeset", className)}>{text}</Streamdown>;
 }

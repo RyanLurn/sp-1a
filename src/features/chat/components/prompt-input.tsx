@@ -1,4 +1,4 @@
-import type { ComponentProps, SubmitEvent } from "react";
+import type { ComponentProps } from "react";
 import type { Except } from "type-fest";
 
 import { useRef, useState } from "react";
@@ -19,17 +19,19 @@ export function ChatPromptInput({
   const formRef = useRef<HTMLFormElement>(null);
   const [text, setText] = useState("");
 
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (text.trim().length === 0) {
-      return;
-    }
-    void sendMessage({ text });
-    setText("");
-  }
-
   return (
-    <form ref={formRef} onSubmit={handleSubmit} {...props}>
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (text.trim().length === 0) {
+          return;
+        }
+        void sendMessage({ text });
+        setText("");
+      }}
+      {...props}
+    >
       <InputGroup>
         <InputGroupTextarea
           value={text}

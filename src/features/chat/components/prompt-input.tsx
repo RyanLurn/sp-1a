@@ -44,7 +44,7 @@ export function ChatPromptInput({
             }
           }}
           className="p-3"
-        ></InputGroupTextarea>
+        />
       </InputGroup>
     </form>
   );

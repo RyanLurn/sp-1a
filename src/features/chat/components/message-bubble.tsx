@@ -3,6 +3,7 @@ import type { Except } from "type-fest";
 
 import type { ChatMessage } from "@/features/chat/schemas/message";
 
+import { Markdown } from "@/components/markdown";
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Message, MessageContent } from "@/components/ui/message";
 
@@ -25,7 +26,9 @@ export function ChatMessageBubble({
             if (part.type === "text") {
               return (
                 <Bubble key={part.type} align="end" variant="secondary">
-                  <BubbleContent>{part.text}</BubbleContent>
+                  <BubbleContent>
+                    <Markdown text={part.text} />
+                  </BubbleContent>
                 </Bubble>
               );
             }
@@ -42,7 +45,9 @@ export function ChatMessageBubble({
           if (part.type === "text") {
             return (
               <Bubble key={part.type} variant="ghost">
-                <BubbleContent>{part.text}</BubbleContent>
+                <BubbleContent>
+                  <Markdown text={part.text} />
+                </BubbleContent>
               </Bubble>
             );
           }

@@ -41,7 +41,7 @@ export const Route = createFileRoute("/chat/{-$threadId}/")({
 
 function RouteComponent() {
   const { chat } = Route.useLoaderData();
-  const { messages } = useChat<ChatMessage>({ chat });
+  const { messages, sendMessage } = useChat<ChatMessage>({ chat });
 
   return (
     <MessageScrollerProvider autoScroll>
@@ -54,9 +54,7 @@ function RouteComponent() {
             />
             <div className="h-20" />
             <ChatPromptInput
-              sendMessage={async ({ text }) => {
-                console.log(text);
-              }}
+              sendMessage={sendMessage}
               className="sticky bottom-5"
             />
           </div>

@@ -1,4 +1,8 @@
+import { useChat } from "@ai-sdk/react";
 import { createFileRoute } from "@tanstack/react-router";
+
+import type { ChatMessage } from "@/features/chat/schemas/message";
+import type { ChatThreadId } from "@/features/chat/types";
 
 import {
   MessageScroller,
@@ -7,15 +11,37 @@ import {
 } from "@/components/ui/message-scroller";
 import { ChatMessageThread } from "@/features/chat/components/message-thread";
 import { ChatPromptInput } from "@/features/chat/components/prompt-input";
-import { MOCK_CHAT_MESSAGES_MARKDOWN } from "@/features/chat/mock/messages/markdown";
+import { createChat } from "@/features/chat/libs/ai-sdk/create-chat";
+import { loadChatThread } from "@/features/chat/operations/load-chat-thread";
+import { ChatThreadIdSchema } from "@/features/chat/schemas/thread";
+import { getChat } from "@/features/chat/stores/chat";
+import { generateId } from "@/libs/uuid";
 
 export const Route = createFileRoute("/chat/{-$threadId}/")({
-  loader: () => MOCK_CHAT_MESSAGES_MARKDOWN,
+  loader: async ({ params }) => {
+    const threadId = ChatThreadIdSchema.default(
+      generateId<ChatThreadId>(),
+    ).parse(params.threadId);
+    const clientChat = getChat({ threadId });
+    if (clientChat) {
+      return { chat: clientChat };
+    }
+    const chatThread = await loadChatThread({ data: { threadId } });
+    if (chatThread === undefined) {
+      throw new Error("404 - Thread not found");
+    }
+    const serverChat = createChat({
+      threadId: chatThread.id,
+      chatMessages: chatThread.messages,
+    });
+    return { chat: serverChat };
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const chatMessages = Route.useLoaderData();
+  const { chat } = Route.useLoaderData();
+  const { messages } = useChat<ChatMessage>({ chat });
 
   return (
     <MessageScrollerProvider autoScroll>
@@ -23,7 +49,7 @@ function RouteComponent() {
         <MessageScrollerViewport>
           <div className="mx-auto flex max-w-2xl flex-col">
             <ChatMessageThread
-              chatMessages={chatMessages}
+              chatMessages={messages}
               className="mt-5 flex-1"
             />
             <div className="h-20" />

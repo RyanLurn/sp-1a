@@ -4,22 +4,30 @@ import { DefaultChatTransport } from "ai";
 import type { ChatMessage } from "@/features/chat/schemas/message";
 import type { ChatThreadId } from "@/features/chat/types";
 
+import { ChatRequestBodySchema } from "@/features/chat/schemas/request-body";
 import { generateUuidV7 } from "@/libs/uuid";
 import { Route as ChatApiRoute } from "@/routes/api/chat";
 
 export function createChat({
-  id,
-  messages,
+  threadId,
+  chatMessages,
 }: {
-  id: ChatThreadId;
-  messages: ChatMessage[];
+  threadId: ChatThreadId;
+  chatMessages: ChatMessage[];
 }) {
   return new Chat({
-    id,
-    messages,
+    id: threadId,
+    messages: chatMessages,
     generateId: generateUuidV7,
-    transport: new DefaultChatTransport({
+    transport: new DefaultChatTransport<ChatMessage>({
       api: ChatApiRoute.to,
+      prepareSendMessagesRequest: ({ id, messages }) => {
+        const body = ChatRequestBodySchema.parse({
+          threadId: id,
+          newMessage: messages.at(-1),
+        });
+        return { body };
+      },
     }),
   });
 }

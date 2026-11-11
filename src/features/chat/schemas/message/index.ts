@@ -22,10 +22,3 @@ export const ChatMessageSchema = z.object({
   ...TimestampsSchema.shape,
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
-
-export const NewChatMessageSchema = ChatMessageSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export type NewChatMessage = z.infer<typeof NewChatMessageSchema>;

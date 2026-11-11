@@ -11,3 +11,15 @@ export function getChat({ threadId }: { threadId: ChatThreadId }) {
   }
   return chatStore.get(threadId);
 }
+
+export function setChat({
+  threadId,
+  chat,
+}: {
+  threadId: ChatThreadId;
+  chat: Chat<ChatMessage>;
+}) {
+  if (typeof window !== "undefined") {
+    chatStore.set(threadId, chat);
+  }
+}

@@ -29,6 +29,7 @@ export const Route = createFileRoute("/chat/{-$threadId}/")({
     }
 
     const threadId = ChatThreadIdSchema.parse(params.threadId);
+
     const clientChat = getChat({ threadId });
     if (clientChat) {
       return { chat: clientChat };

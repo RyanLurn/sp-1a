@@ -162,6 +162,8 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+packageExtensionsChecksum: sha256-a6NqvLnD1qBjY8l0tzrivl6ak7uIoEA0stYEtzDImRg=
+
 importers:
 
   .:
@@ -272,6 +274,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: 6.3.0
         version: 6.3.0(oxc-transform-react@0.158.0)(vite@8.3.7(@types/node@26.6.6)(jiti@2.7.0))
+      drizzle-kit:
+        specifier: 1.0.0-rc.5
+        version: 1.0.0-rc.5(@neondatabase/serverless@1.2.0)(drizzle-orm@1.0.0-rc.5(@neondatabase/serverless@1.2.0)(zod@4.6.7))
       oxc-transform-react:
         specifier: 0.158.0
         version: 0.158.0
@@ -1897,6 +1902,18 @@ packages:
   dotenv@17.4.2:
     resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
     engines: {node: '>=12'}
+
+  drizzle-kit@1.0.0-rc.5:
+    resolution: {integrity: sha512-8glQN7iFK3e1aOIoRit1NtslcsqE/rnlqNw/1jUC5Ph4RFVh/E5Jricxd6Nu2ugj2HlFZlZ6O4006AwqJ9e24g==}
+    hasBin: true
+    peerDependencies:
+      '@neondatabase/serverless': '*'
+      drizzle-orm: '>=1.0.0-rc.5'
+    peerDependenciesMeta:
+      '@neondatabase/serverless':
+        optional: true
+      drizzle-orm:
+        optional: true
 
   drizzle-orm@1.0.0-rc.5:
     resolution: {integrity: sha512-7BMYTsAZbQ9DcQCtLG4G202Hq6nc/e8o1EBKN6nBweRI8EGPFe/VdyvWQCsU9fuZSiRjNpELolUSi//JFBq+lw==}
@@ -4693,6 +4710,11 @@ snapshots:
       is-obj: 2.0.0
 
   dotenv@17.4.2: {}
+
+  drizzle-kit@1.0.0-rc.5(@neondatabase/serverless@1.2.0)(drizzle-orm@1.0.0-rc.5(@neondatabase/serverless@1.2.0)(zod@4.6.7)):
+    optionalDependencies:
+      '@neondatabase/serverless': 1.2.0
+      drizzle-orm: 1.0.0-rc.5(@neondatabase/serverless@1.2.0)(zod@4.6.7)
 
   drizzle-orm@1.0.0-rc.5(@neondatabase/serverless@1.2.0)(zod@4.6.7):
     optionalDependencies:

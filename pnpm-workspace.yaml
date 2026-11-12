@@ -3,6 +3,16 @@ savePrefix: ""
 virtualStoreType: global
 allowBuilds:
   esbuild: true
+packageExtensions:
+  "drizzle-kit":
+    peerDependencies:
+      "@neondatabase/serverless": "*"
+      "drizzle-orm": "*"
+    peerDependenciesMeta:
+      "@neondatabase/serverless":
+        optional: true
+      "drizzle-orm":
+        optional: true
 
 # Supply chain attack mitigation
 minimumReleaseAge: 1440

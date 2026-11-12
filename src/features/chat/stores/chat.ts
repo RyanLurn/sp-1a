@@ -23,3 +23,13 @@ export function setChat({
     chatStore.set(threadId, chat);
   }
 }
+
+export function deleteEmptyChats() {
+  if (typeof window !== "undefined") {
+    for (const [threadId, chat] of chatStore) {
+      if (chat.status === "ready" && chat.messages.length === 0) {
+        chatStore.delete(threadId);
+      }
+    }
+  }
+}

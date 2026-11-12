@@ -10,6 +10,7 @@ export const Route = createFileRoute("/api/chat/")({
 
         const jsonParseResult = jsonParse(text);
         if (!jsonParseResult.success) {
+          console.error(jsonParseResult.error);
           const httpStatus = HTTP_ERROR_RESPONSE_STATUS_ENUM.BAD_REQUEST;
           return new Response(null, {
             status: httpStatus.code,

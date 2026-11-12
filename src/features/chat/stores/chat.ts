@@ -24,6 +24,16 @@ export function setChat({
   }
 }
 
+export function getEmptyChat() {
+  if (typeof window !== "undefined") {
+    for (const [threadId, chat] of chatStore) {
+      if (chat.status === "ready" && chat.messages.length === 0) {
+        return chatStore.get(threadId);
+      }
+    }
+  }
+}
+
 export function deleteEmptyChats() {
   if (typeof window !== "undefined") {
     for (const [threadId, chat] of chatStore) {

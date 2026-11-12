@@ -20,6 +20,7 @@
     "@fontsource-variable/geist": "5.3.0",
     "@fontsource-variable/geist-mono": "5.3.0",
     "@little-nebulae/error": "1.4.1",
+    "@little-nebulae/json": "0.5.1",
     "@little-nebulae/result": "1.4.0",
     "@little-nebulae/zod": "0.6.0",
     "@little-nebulae/zod-schemas": "0.2.0",

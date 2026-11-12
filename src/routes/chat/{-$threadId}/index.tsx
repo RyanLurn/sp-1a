@@ -1,5 +1,5 @@
 import { useChat } from "@ai-sdk/react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import type { ChatMessage } from "@/features/chat/schemas/message";
 import type { ChatThreadId } from "@/features/chat/types";
@@ -55,8 +55,21 @@ export const Route = createFileRoute("/chat/{-$threadId}/")({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
+  const { threadId } = Route.useParams();
   const { chat } = Route.useLoaderData();
   const { messages, sendMessage } = useChat<ChatMessage>({ chat });
+
+  async function sendPrompt({ text }: { text: string }) {
+    await sendMessage({ text });
+    if (threadId === undefined) {
+      await navigate({
+        to: "/chat/{-$threadId}",
+        params: { threadId: chat.id },
+        replace: true,
+      });
+    }
+  }
 
   return (
     <MessageScrollerProvider autoScroll>
@@ -69,7 +82,7 @@ function RouteComponent() {
             />
             <div className="h-20" />
             <ChatPromptInput
-              sendMessage={sendMessage}
+              sendPrompt={sendPrompt}
               className="sticky bottom-5"
             />
           </div>

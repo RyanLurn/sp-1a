@@ -184,6 +184,9 @@ importers:
       '@little-nebulae/error':
         specifier: 1.4.1
         version: 1.4.1(type-fest@5.10.0)
+      '@little-nebulae/http':
+        specifier: 0.2.0
+        version: 0.2.0(type-fest@5.10.0)
       '@little-nebulae/json':
         specifier: 0.5.1
         version: 0.5.1(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(@little-nebulae/zod@0.6.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)(zod@4.6.7))(type-fest@5.10.0)(zod@4.6.7)
@@ -535,6 +538,11 @@ packages:
 
   '@little-nebulae/error@1.4.1':
     resolution: {integrity: sha512-ngPlRofsIvSXwJ5HoZUwMP5dIQ3QV9MfwcB8IT20UoLD7E2VU2qBmIY9jSIyU5XOf/Kb/wUFdI0YzIxwPAycyg==}
+    peerDependencies:
+      type-fest: ^5.0.0
+
+  '@little-nebulae/http@0.2.0':
+    resolution: {integrity: sha512-XV3Sin/mGnKCkoDjJopWKOPbiPzf1wBOTjJjoQ3IvW3PUQkmB2HoWhCVJLMvGq5MdExoTF/+dsQ9x3CmKy0RnQ==}
     peerDependencies:
       type-fest: ^5.0.0
 
@@ -3670,6 +3678,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.6.0
 
   '@little-nebulae/error@1.4.1(type-fest@5.10.0)':
+    dependencies:
+      type-fest: 5.10.0
+
+  '@little-nebulae/http@0.2.0(type-fest@5.10.0)':
     dependencies:
       type-fest: 5.10.0
 

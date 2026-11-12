@@ -14,7 +14,7 @@ import { ChatPromptInput } from "@/features/chat/components/prompt-input";
 import { createChat } from "@/features/chat/libs/ai-sdk/create-chat";
 import { loadChatThread } from "@/features/chat/operations/load-chat-thread";
 import { ChatThreadIdSchema } from "@/features/chat/schemas/thread";
-import { getChat } from "@/features/chat/stores/chat";
+import { getChat, setChat } from "@/features/chat/stores/chat";
 import { generateId } from "@/libs/uuid";
 
 export const Route = createFileRoute("/chat/{-$threadId}/")({
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/chat/{-$threadId}/")({
         threadId,
         chatMessages: [],
       });
+      setChat({ threadId, chat: newChat });
       return { chat: newChat };
     }
 

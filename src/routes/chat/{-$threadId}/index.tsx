@@ -49,6 +49,7 @@ export const Route = createFileRoute("/chat/{-$threadId}/")({
       threadId: chatThread.id,
       chatMessages: chatThread.messages,
     });
+    setChat({ threadId, chat: serverChat });
     return { chat: serverChat };
   },
   component: RouteComponent,

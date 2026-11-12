@@ -19,13 +19,21 @@ import { generateId } from "@/libs/uuid";
 
 export const Route = createFileRoute("/chat/{-$threadId}/")({
   loader: async ({ params }) => {
-    const threadId = ChatThreadIdSchema.default(
-      generateId<ChatThreadId>(),
-    ).parse(params.threadId);
+    if (params.threadId === undefined) {
+      const threadId = generateId<ChatThreadId>();
+      const newChat = createChat({
+        threadId,
+        chatMessages: [],
+      });
+      return { chat: newChat };
+    }
+
+    const threadId = ChatThreadIdSchema.parse(params.threadId);
     const clientChat = getChat({ threadId });
     if (clientChat) {
       return { chat: clientChat };
     }
+
     const chatThread = await loadChatThread({ data: { threadId } });
     if (chatThread === undefined) {
       throw new Error("404 - Thread not found");

@@ -11,7 +11,10 @@
     "lint:fix": "oxlint --fix --disable-nested-config",
     "check": "pnpm run lint && pnpm run fmt:check",
     "fix": "pnpm run lint:fix && pnpm run fmt",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:check": "drizzle-kit check",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@ai-sdk/groq": "4.0.78",

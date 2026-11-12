@@ -14,12 +14,17 @@ import { ChatPromptInput } from "@/features/chat/components/prompt-input";
 import { createChat } from "@/features/chat/libs/ai-sdk/create-chat";
 import { loadChatThread } from "@/features/chat/operations/load-chat-thread";
 import { ChatThreadIdSchema } from "@/features/chat/schemas/thread";
-import { getChat, setChat } from "@/features/chat/stores/chat";
+import { getChat, getEmptyChat, setChat } from "@/features/chat/stores/chat";
 import { generateId } from "@/libs/uuid";
 
 export const Route = createFileRoute("/chat/{-$threadId}/")({
   loader: async ({ params }) => {
     if (params.threadId === undefined) {
+      const emptyChat = getEmptyChat();
+      if (emptyChat) {
+        return { chat: emptyChat };
+      }
+
       const threadId = generateId<ChatThreadId>();
       const newChat = createChat({
         threadId,

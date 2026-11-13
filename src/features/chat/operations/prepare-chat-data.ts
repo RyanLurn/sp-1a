@@ -30,7 +30,7 @@ export async function prepareChatData({
         db
           .insert(chatThreadTable)
           .values({ id: threadId })
-          .onConflictDoNothing(),
+          .onConflictDoNothing({ target: chatThreadTable.id }),
         db.insert(chatMessageTable).values(newMessage).onConflictDoNothing(),
       ]),
     catchFn: (error) =>

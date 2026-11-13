@@ -31,13 +31,11 @@ const DbEnvSchema = z.object({
 });
 type DbEnv = z.infer<typeof DbEnvSchema>;
 
+export type Db = NeonHttpDatabase<typeof relations> & {
+  $client: NeonQueryFunction<false, false>;
+};
 export const createDb = createServerOnlyFn(
-  (): Result<
-    NeonHttpDatabase<typeof relations> & {
-      $client: NeonQueryFunction<false, false>;
-    },
-    ZodParseError<DbEnv>
-  > => {
+  (): Result<Db, ZodParseError<DbEnv>> => {
     const parseEnvResult = wrapZodResult(DbEnvSchema.safeParse(process.env));
     if (!parseEnvResult.success) {
       return parseEnvResult;

@@ -192,6 +192,9 @@ importers:
       '@little-nebulae/json':
         specifier: 0.5.1
         version: 0.5.1(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(@little-nebulae/zod@0.6.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)(zod@4.6.7))(type-fest@5.10.0)(zod@4.6.7)
+      '@little-nebulae/postgresql':
+        specifier: 0.1.0
+        version: 0.1.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))
       '@little-nebulae/result':
         specifier: 1.4.0
         version: 1.4.0
@@ -559,6 +562,11 @@ packages:
       '@little-nebulae/zod': 0.x.x
       type-fest: ^5.0.0
       zod: ^4.0.0
+
+  '@little-nebulae/postgresql@0.1.0':
+    resolution: {integrity: sha512-8d3M91pY0+mUx8t8F3iv3jOXyqgoFX9IKAjh2FtwzMxcmEGWkrMmwb5z/J1EZY7SYxPrY6zKi7Rq37gOfkiIdw==}
+    peerDependencies:
+      '@little-nebulae/error': ^1.0.0
 
   '@little-nebulae/result@1.4.0':
     resolution: {integrity: sha512-ItjYTaBxSXQf1+bxL6hqpySq2oG+STTCrGLxnHAZKNRrxfVt6MoC0LZvxKaOKB/VNr0uNfKvX/cKHJiWDYb5ZQ==}
@@ -3709,6 +3717,10 @@ snapshots:
       '@little-nebulae/zod': 0.6.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)(zod@4.6.7)
       type-fest: 5.10.0
       zod: 4.6.7
+
+  '@little-nebulae/postgresql@0.1.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))':
+    dependencies:
+      '@little-nebulae/error': 1.4.1(type-fest@5.10.0)
 
   '@little-nebulae/result@1.4.0': {}
 

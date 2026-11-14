@@ -25,6 +25,7 @@
     "@little-nebulae/error": "1.4.1",
     "@little-nebulae/http": "0.2.0",
     "@little-nebulae/json": "0.5.1",
+    "@little-nebulae/postgresql": "0.1.0",
     "@little-nebulae/result": "1.4.0",
     "@little-nebulae/zod": "0.6.0",
     "@little-nebulae/zod-schemas": "0.2.0",

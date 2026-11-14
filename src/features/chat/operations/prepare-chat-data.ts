@@ -17,8 +17,8 @@ export async function prepareChatData({
   newMessage: InsertedChatMessage;
 }) {
   return attemptAsync({
-    tryFn: () =>
-      db.batch([
+    tryFn: async () => {
+      const [queryThreadResult] = await db.batch([
         db.query.chatThreads.findFirst({
           where: { id: threadId },
           with: {
@@ -31,8 +31,16 @@ export async function prepareChatData({
           .insert(chatThreadTable)
           .values({ id: threadId })
           .onConflictDoNothing({ target: chatThreadTable.id }),
-        db.insert(chatMessageTable).values(newMessage).onConflictDoNothing(),
-      ]),
+        db.insert(chatMessageTable).values(newMessage),
+      ]);
+      if (queryThreadResult === undefined) {
+        return { isNew: true, messages: [newMessage] };
+      }
+      return {
+        isNew: false,
+        messages: [...queryThreadResult.messages, newMessage],
+      };
+    },
     catchFn: (error) =>
       new UnexpectedError({
         message: composeErrorMessage({ operation: "prepare chat data" }),

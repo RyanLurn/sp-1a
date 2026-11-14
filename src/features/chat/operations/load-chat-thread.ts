@@ -1,8 +1,7 @@
-import { unwrap } from "@little-nebulae/result";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { createDb } from "@/db/create";
+import { createDb, DbEnvSchema } from "@/db/create";
 import { ChatThreadIdSchema } from "@/features/chat/schemas/thread";
 
 const InputDataSchema = z.object({
@@ -13,7 +12,11 @@ export const loadChatThread = createServerFn()
   .validator(InputDataSchema)
   .handler(async ({ data }) => {
     const { threadId } = data;
-    const db = unwrap(createDb());
+
+    const env = DbEnvSchema.parse(process.env);
+    const db = createDb({
+      connectionString: env.NEON_POOLED_CONNECTION_STRING,
+    });
 
     const result = await db.query.chatThreads.findFirst({
       where: { id: threadId },

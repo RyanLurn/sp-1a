@@ -1,8 +1,10 @@
 import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { PostgreSqlUniqueConstraintViolationError } from "@little-nebulae/postgresql";
 import { fail, succeed } from "@little-nebulae/result";
+import { convertToModelMessages } from "ai";
 
 import type { Db } from "@/db/create";
+import type { ChatMessage } from "@/features/chat/schemas/message";
 import type { NewChatMessage } from "@/features/chat/schemas/request-body";
 import type { ChatThreadId } from "@/features/chat/types";
 
@@ -55,12 +57,17 @@ export async function prepareChatData({
     }
 
     if (queryThreadResult === undefined) {
-      return succeed({ isNew: true, messages: [newMessage] });
+      const messages = await convertToModelMessages<ChatMessage>([
+        returnedMessage,
+      ]);
+      return succeed({ isNew: true, messages });
     }
-    return succeed({
-      isNew: false,
-      messages: [...queryThreadResult.messages, newMessage],
-    });
+
+    const messages = await convertToModelMessages<ChatMessage>([
+      ...queryThreadResult.messages,
+      returnedMessage,
+    ]);
+    return succeed({ isNew: false, messages });
   } catch (error) {
     return fail(
       new UnexpectedError({

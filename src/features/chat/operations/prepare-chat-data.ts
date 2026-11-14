@@ -3,7 +3,7 @@ import { PostgreSqlUniqueConstraintViolationError } from "@little-nebulae/postgr
 import { fail, succeed } from "@little-nebulae/result";
 
 import type { Db } from "@/db/create";
-import type { InsertedChatMessage } from "@/db/tables/chat";
+import type { NewChatMessage } from "@/features/chat/schemas/request-body";
 import type { ChatThreadId } from "@/features/chat/types";
 
 import { chatMessageTable, chatThreadTable } from "@/db/tables/chat";
@@ -15,7 +15,7 @@ export async function prepareChatData({
 }: {
   db: Db;
   threadId: ChatThreadId;
-  newMessage: InsertedChatMessage;
+  newMessage: NewChatMessage;
 }) {
   try {
     const [queryThreadResult, _, [returnedMessage]] = await db.batch([
@@ -33,7 +33,7 @@ export async function prepareChatData({
         .onConflictDoNothing({ target: chatThreadTable.id }),
       db
         .insert(chatMessageTable)
-        .values(newMessage)
+        .values({ ...newMessage, threadId })
         .onConflictDoNothing({ target: chatMessageTable.id })
         .returning(),
     ]);

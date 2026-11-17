@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/chat/")({
       POST: async ({ request }) => {
         const text = await request.text();
 
-        const jsonParseResult = jsonParse(text);
+        const jsonParseResult = jsonParse({ text });
         if (!jsonParseResult.success) {
           console.error(jsonParseResult.error);
           const httpStatus = HTTP_ERROR_RESPONSE_STATUS_ENUM.BAD_REQUEST;

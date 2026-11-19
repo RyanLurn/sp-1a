@@ -1,14 +1,23 @@
 import {
   composeErrorMessage,
   UNEXPECTED_ERROR_CODE,
+  UnexpectedError,
 } from "@little-nebulae/error";
 import { jsonParse } from "@little-nebulae/json";
 import { webCreateErrorResponse } from "@little-nebulae/web-fetch";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  createUIMessageStreamResponse,
+  streamText,
+  toUIMessageStream,
+} from "ai";
 import { z } from "zod";
 
 import { createDb, DbEnvSchema } from "@/db/create";
-import { GroqEnvSchema } from "@/features/chat/libs/ai-sdk/create-groq-provider";
+import {
+  createGroqProvider,
+  GroqEnvSchema,
+} from "@/features/chat/libs/ai-sdk/create-groq-provider";
 import { prepareChatData } from "@/features/chat/operations/prepare-chat-data";
 import { ChatRequestBodySchema } from "@/features/chat/schemas/request-body";
 
@@ -103,7 +112,35 @@ export const Route = createFileRoute("/api/chat/")({
             status: "INTERNAL_SERVER_ERROR",
           });
         }
-        const { isNew, messages } = prepareChatDataResult.data;
+        const { messages } = prepareChatDataResult.data;
+
+        const groqProvider = createGroqProvider({ apiKey: env.GROQ_API_KEY });
+        try {
+          const streamTextResult = streamText({
+            model: groqProvider("openai/gpt-oss-120b"),
+            messages,
+          });
+
+          return createUIMessageStreamResponse({
+            stream: toUIMessageStream({ stream: streamTextResult.stream }),
+          });
+        } catch (error) {
+          const unexpectedError = new UnexpectedError({
+            message: composeErrorMessage({
+              operation: "generate LLM response",
+            }),
+            cause: error,
+            meta: null,
+          });
+          console.error(unexpectedError);
+          return webCreateErrorResponse({
+            requestMethod: METHOD,
+            code: unexpectedError.code,
+            message: unexpectedError.message,
+            meta: null,
+            status: "INTERNAL_SERVER_ERROR",
+          });
+        }
       },
     },
   },

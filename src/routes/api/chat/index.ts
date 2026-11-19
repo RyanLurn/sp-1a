@@ -119,20 +119,20 @@ export const Route = createFileRoute("/api/chat/")({
             status: "INTERNAL_SERVER_ERROR",
           });
         }
-        const { originalMessages, messages } = prepareChatDataResult.data;
+        const { chatMessages, modelMessages } = prepareChatDataResult.data;
 
         const groqProvider = createGroqProvider({ apiKey: env.GROQ_API_KEY });
         try {
           const streamTextResult = streamText({
             model: groqProvider("openai/gpt-oss-120b"),
-            messages,
+            messages: modelMessages,
           });
 
           return createUIMessageStreamResponse({
             stream: toUIMessageStream<ToolSet, ChatMessage>({
               stream: streamTextResult.stream,
               generateMessageId: generateId<ChatMessageId>,
-              originalMessages,
+              originalMessages: chatMessages,
               onEnd: ({ messages }) => {
                 void saveChatMessage({
                   db,

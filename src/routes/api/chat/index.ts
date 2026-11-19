@@ -34,19 +34,19 @@ export const Route = createFileRoute("/api/chat/")({
         }
         const json = jsonParseResult.data;
 
-        const zodParseResult = ChatRequestBodySchema.safeParse(json);
-        if (!zodParseResult.success) {
-          const zodParseError = zodParseResult.error;
-          console.error(zodParseError);
+        const validateRequestBodyResult = ChatRequestBodySchema.safeParse(json);
+        if (!validateRequestBodyResult.success) {
+          const validateRequestBodyError = validateRequestBodyResult.error;
+          console.error(validateRequestBodyError);
           return webCreateErrorResponse({
             requestMethod: METHOD,
             code: "VALIDATION_ERROR",
-            message: zodParseError.message,
-            meta: z.treeifyError(zodParseError),
+            message: validateRequestBodyError.message,
+            meta: z.treeifyError(validateRequestBodyError),
             status: "UNPROCESSABLE_CONTENT",
           });
         }
-        const { threadId, newMessage } = zodParseResult.data;
+        const { threadId, newMessage } = validateRequestBodyResult.data;
 
         const parseEnvResult = z
           .object({

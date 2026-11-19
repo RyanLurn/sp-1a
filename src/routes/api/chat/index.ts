@@ -133,12 +133,15 @@ export const Route = createFileRoute("/api/chat/")({
               stream: streamTextResult.stream,
               generateMessageId: generateId<ChatMessageId>,
               originalMessages: chatMessages,
-              onEnd: ({ messages }) => {
-                void saveChatMessage({
+              onEnd: async ({ messages }) => {
+                const saveChatMessageResult = await saveChatMessage({
                   db,
                   threadId,
                   message: messages.at(-1)!,
                 });
+                if (!saveChatMessageResult.success) {
+                  console.error(saveChatMessageResult.error);
+                }
               },
             }),
           });

@@ -1,3 +1,5 @@
+import type { ToolSet } from "ai";
+
 import {
   composeErrorMessage,
   UNEXPECTED_ERROR_CODE,
@@ -13,13 +15,18 @@ import {
 } from "ai";
 import { z } from "zod";
 
+import type { ChatMessage } from "@/features/chat/schemas/message";
+import type { ChatMessageId } from "@/features/chat/types";
+
 import { createDb, DbEnvSchema } from "@/db/create";
 import {
   createGroqProvider,
   GroqEnvSchema,
 } from "@/features/chat/libs/ai-sdk/create-groq-provider";
 import { prepareChatData } from "@/features/chat/operations/prepare-chat-data";
+import { saveChatMessage } from "@/features/chat/operations/save-chat-message";
 import { ChatRequestBodySchema } from "@/features/chat/schemas/request-body";
+import { generateId } from "@/libs/uuid";
 
 const METHOD = "POST";
 
@@ -112,7 +119,7 @@ export const Route = createFileRoute("/api/chat/")({
             status: "INTERNAL_SERVER_ERROR",
           });
         }
-        const { messages } = prepareChatDataResult.data;
+        const { originalMessages, messages } = prepareChatDataResult.data;
 
         const groqProvider = createGroqProvider({ apiKey: env.GROQ_API_KEY });
         try {
@@ -122,7 +129,18 @@ export const Route = createFileRoute("/api/chat/")({
           });
 
           return createUIMessageStreamResponse({
-            stream: toUIMessageStream({ stream: streamTextResult.stream }),
+            stream: toUIMessageStream<ToolSet, ChatMessage>({
+              stream: streamTextResult.stream,
+              generateMessageId: generateId<ChatMessageId>,
+              originalMessages,
+              onEnd: ({ messages }) => {
+                void saveChatMessage({
+                  db,
+                  threadId,
+                  message: messages.at(-1)!,
+                });
+              },
+            }),
           });
         } catch (error) {
           const unexpectedError = new UnexpectedError({

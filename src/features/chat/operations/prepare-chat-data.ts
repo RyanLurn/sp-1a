@@ -22,7 +22,7 @@ export async function prepareChatData({
   threadId: ChatThreadId;
   newMessage: NewChatMessage;
 }): AsyncResult<
-  { isNew: boolean; messages: ModelMessage[] },
+  { isNew: boolean; originalMessages: ChatMessage[]; messages: ModelMessage[] },
   | PostgreSqlUniqueConstraintViolationError<
       "The returned message after insert is undefined.",
       { isNew: true } | { isNew: false; oldMessages: ChatMessage[] }
@@ -67,17 +67,20 @@ export async function prepareChatData({
     }
 
     if (queryThreadResult === undefined) {
-      const messages = await convertToModelMessages<ChatMessage>([
-        returnedMessage,
-      ]);
-      return succeed({ isNew: true, messages });
+      const originalMessages = [returnedMessage];
+      const messages =
+        await convertToModelMessages<ChatMessage>(originalMessages);
+      return succeed({
+        isNew: true,
+        originalMessages,
+        messages,
+      });
     }
 
-    const messages = await convertToModelMessages<ChatMessage>([
-      ...queryThreadResult.messages,
-      returnedMessage,
-    ]);
-    return succeed({ isNew: false, messages });
+    const originalMessages = [...queryThreadResult.messages, returnedMessage];
+    const messages =
+      await convertToModelMessages<ChatMessage>(originalMessages);
+    return succeed({ isNew: false, originalMessages, messages });
   } catch (error) {
     return fail(
       new UnexpectedError({

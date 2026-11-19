@@ -134,6 +134,14 @@ export const Route = createFileRoute("/api/chat/")({
               generateMessageId: generateId<ChatMessageId>,
               originalMessages: chatMessages,
               onEnd: async ({ messages }) => {
+                const generatedMessage = messages.at(-1);
+                if (
+                  generatedMessage === undefined ||
+                  generatedMessage.role !== "assistant"
+                ) {
+                  console.error("No assistant message was generated.");
+                  return;
+                }
                 const saveChatMessageResult = await saveChatMessage({
                   db,
                   threadId,

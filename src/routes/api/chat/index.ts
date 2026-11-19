@@ -95,7 +95,7 @@ export const Route = createFileRoute("/api/chat/")({
           }
           return webCreateErrorResponse({
             requestMethod: METHOD,
-            code: UNEXPECTED_ERROR_CODE,
+            code: prepareChatDataError.code,
             message: composeErrorMessage({
               operation: "generate LLM response",
             }),

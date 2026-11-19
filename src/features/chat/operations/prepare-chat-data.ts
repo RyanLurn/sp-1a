@@ -4,6 +4,7 @@ import type { ModelMessage } from "ai";
 import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { PostgreSqlUniqueConstraintViolationError } from "@little-nebulae/postgresql";
 import { fail, succeed } from "@little-nebulae/result";
+import { createServerOnlyFn } from "@tanstack/react-start";
 import { convertToModelMessages } from "ai";
 
 import type { Db } from "@/db/create";
@@ -13,85 +14,87 @@ import type { ChatThreadId } from "@/features/chat/types";
 
 import { chatMessageTable, chatThreadTable } from "@/db/tables/chat";
 
-export async function prepareChatData({
-  db,
-  threadId,
-  newMessage,
-}: {
-  db: Db;
-  threadId: ChatThreadId;
-  newMessage: NewChatMessage;
-}): AsyncResult<
-  {
-    isNew: boolean;
-    chatMessages: ChatMessage[];
-    modelMessages: ModelMessage[];
-  },
-  | PostgreSqlUniqueConstraintViolationError<
-      "The returned message after insert is undefined.",
-      { isNew: true } | { isNew: false; oldMessages: ChatMessage[] }
-    >
-  | UnexpectedError
-> {
-  try {
-    const [queryThreadResult, _, [returnedMessage]] = await db.batch([
-      db.query.chatThreads.findFirst({
-        where: { id: threadId },
-        with: {
-          messages: {
-            orderBy: { createdAt: "asc" },
+export const prepareChatData = createServerOnlyFn(
+  async ({
+    db,
+    threadId,
+    newMessage,
+  }: {
+    db: Db;
+    threadId: ChatThreadId;
+    newMessage: NewChatMessage;
+  }): AsyncResult<
+    {
+      isNew: boolean;
+      chatMessages: ChatMessage[];
+      modelMessages: ModelMessage[];
+    },
+    | PostgreSqlUniqueConstraintViolationError<
+        "The returned message after insert is undefined.",
+        { isNew: true } | { isNew: false; oldMessages: ChatMessage[] }
+      >
+    | UnexpectedError
+  > => {
+    try {
+      const [queryThreadResult, _, [returnedMessage]] = await db.batch([
+        db.query.chatThreads.findFirst({
+          where: { id: threadId },
+          with: {
+            messages: {
+              orderBy: { createdAt: "asc" },
+            },
           },
-        },
-      }),
-      db
-        .insert(chatThreadTable)
-        .values({ id: threadId })
-        .onConflictDoNothing({ target: chatThreadTable.id }),
-      db
-        .insert(chatMessageTable)
-        .values({ ...newMessage, threadId })
-        .onConflictDoNothing({ target: chatMessageTable.id })
-        .returning(),
-    ]);
+        }),
+        db
+          .insert(chatThreadTable)
+          .values({ id: threadId })
+          .onConflictDoNothing({ target: chatThreadTable.id }),
+        db
+          .insert(chatMessageTable)
+          .values({ ...newMessage, threadId })
+          .onConflictDoNothing({ target: chatMessageTable.id })
+          .returning(),
+      ]);
 
-    if (returnedMessage === undefined) {
-      return fail(
-        new PostgreSqlUniqueConstraintViolationError({
-          message: composeErrorMessage({
-            operation: "insert new message",
-            reason: "duplicate id",
+      if (returnedMessage === undefined) {
+        return fail(
+          new PostgreSqlUniqueConstraintViolationError({
+            message: composeErrorMessage({
+              operation: "insert new message",
+              reason: "duplicate id",
+            }),
+            cause: "The returned message after insert is undefined." as const,
+            meta:
+              queryThreadResult === undefined
+                ? { isNew: true }
+                : { isNew: false, oldMessages: queryThreadResult.messages },
           }),
-          cause: "The returned message after insert is undefined." as const,
-          meta:
-            queryThreadResult === undefined
-              ? { isNew: true }
-              : { isNew: false, oldMessages: queryThreadResult.messages },
+        );
+      }
+
+      if (queryThreadResult === undefined) {
+        const chatMessages = [returnedMessage];
+        const modelMessages =
+          await convertToModelMessages<ChatMessage>(chatMessages);
+        return succeed({
+          isNew: true,
+          chatMessages,
+          modelMessages,
+        });
+      }
+
+      const chatMessages = [...queryThreadResult.messages, returnedMessage];
+      const modelMessages =
+        await convertToModelMessages<ChatMessage>(chatMessages);
+      return succeed({ isNew: false, chatMessages, modelMessages });
+    } catch (error) {
+      return fail(
+        new UnexpectedError({
+          message: composeErrorMessage({ operation: "prepare chat data" }),
+          cause: error,
+          meta: null,
         }),
       );
     }
-
-    if (queryThreadResult === undefined) {
-      const chatMessages = [returnedMessage];
-      const modelMessages =
-        await convertToModelMessages<ChatMessage>(chatMessages);
-      return succeed({
-        isNew: true,
-        chatMessages,
-        modelMessages,
-      });
-    }
-
-    const chatMessages = [...queryThreadResult.messages, returnedMessage];
-    const modelMessages =
-      await convertToModelMessages<ChatMessage>(chatMessages);
-    return succeed({ isNew: false, chatMessages, modelMessages });
-  } catch (error) {
-    return fail(
-      new UnexpectedError({
-        message: composeErrorMessage({ operation: "prepare chat data" }),
-        cause: error,
-        meta: null,
-      }),
-    );
-  }
-}
+  },
+);

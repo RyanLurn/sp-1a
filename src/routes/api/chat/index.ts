@@ -1,6 +1,9 @@
-import { composeErrorMessage } from "@little-nebulae/error";
-import { HTTP_ERROR_RESPONSE_STATUS_ENUM } from "@little-nebulae/http";
+import {
+  composeErrorMessage,
+  UNEXPECTED_ERROR_CODE,
+} from "@little-nebulae/error";
 import { jsonParse } from "@little-nebulae/json";
+import { webCreateErrorResponse } from "@little-nebulae/web-fetch";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
@@ -9,30 +12,38 @@ import { GroqEnvSchema } from "@/features/chat/libs/ai-sdk/create-groq-provider"
 import { prepareChatData } from "@/features/chat/operations/prepare-chat-data";
 import { ChatRequestBodySchema } from "@/features/chat/schemas/request-body";
 
+const METHOD = "POST";
+
 export const Route = createFileRoute("/api/chat/")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      [METHOD]: async ({ request }) => {
         const text = await request.text();
 
         const jsonParseResult = jsonParse({ text });
         if (!jsonParseResult.success) {
-          console.error(jsonParseResult.error);
-          const httpStatus = HTTP_ERROR_RESPONSE_STATUS_ENUM.BAD_REQUEST;
-          return new Response(jsonParseResult.error.message, {
-            status: httpStatus.code,
-            statusText: httpStatus.text,
+          const jsonParseError = jsonParseResult.error;
+          console.error(jsonParseError);
+          return webCreateErrorResponse({
+            requestMethod: METHOD,
+            code: jsonParseError.code,
+            message: jsonParseError.message,
+            meta: null,
+            status: "BAD_REQUEST",
           });
         }
         const json = jsonParseResult.data;
 
         const zodParseResult = ChatRequestBodySchema.safeParse(json);
         if (!zodParseResult.success) {
-          console.error(zodParseResult.error);
-          const httpStatus = HTTP_ERROR_RESPONSE_STATUS_ENUM.BAD_REQUEST;
-          return new Response(z.prettifyError(zodParseResult.error), {
-            status: httpStatus.code,
-            statusText: httpStatus.text,
+          const zodParseError = zodParseResult.error;
+          console.error(zodParseError);
+          return webCreateErrorResponse({
+            requestMethod: METHOD,
+            code: "VALIDATION_ERROR",
+            message: zodParseError.message,
+            meta: z.treeifyError(zodParseError),
+            status: "UNPROCESSABLE_CONTENT",
           });
         }
         const { threadId, newMessage } = zodParseResult.data;
@@ -44,16 +55,17 @@ export const Route = createFileRoute("/api/chat/")({
           })
           .safeParse(process.env, { reportInput: false });
         if (!parseEnvResult.success) {
-          console.error(parseEnvResult.error);
-          const httpStatus =
-            HTTP_ERROR_RESPONSE_STATUS_ENUM.INTERNAL_SERVER_ERROR;
-          return new Response(
-            composeErrorMessage({ operation: "generate LLM response" }),
-            {
-              status: httpStatus.code,
-              statusText: httpStatus.text,
-            },
-          );
+          const parseEnvError = parseEnvResult.error;
+          console.error(parseEnvError);
+          return webCreateErrorResponse({
+            requestMethod: METHOD,
+            code: UNEXPECTED_ERROR_CODE,
+            message: composeErrorMessage({
+              operation: "generate LLM response",
+            }),
+            meta: null,
+            status: "INTERNAL_SERVER_ERROR",
+          });
         }
         const env = parseEnvResult.data;
 
@@ -73,21 +85,23 @@ export const Route = createFileRoute("/api/chat/")({
             prepareChatDataError.code ===
             "POSTGRESQL_UNIQUE_CONSTRAINT_VIOLATION_ERROR"
           ) {
-            const httpStatus = HTTP_ERROR_RESPONSE_STATUS_ENUM.CONFLICT;
-            return new Response("The new message's id already exists.", {
-              status: httpStatus.code,
-              statusText: httpStatus.text,
+            return webCreateErrorResponse({
+              requestMethod: METHOD,
+              code: "RESOURCE_ALREADY_EXISTS_ERROR",
+              message: "The id of new message already exists.",
+              meta: null,
+              status: "CONFLICT",
             });
           }
-          const httpStatus =
-            HTTP_ERROR_RESPONSE_STATUS_ENUM.INTERNAL_SERVER_ERROR;
-          return new Response(
-            composeErrorMessage({ operation: "generate LLM response" }),
-            {
-              status: httpStatus.code,
-              statusText: httpStatus.text,
-            },
-          );
+          return webCreateErrorResponse({
+            requestMethod: METHOD,
+            code: UNEXPECTED_ERROR_CODE,
+            message: composeErrorMessage({
+              operation: "generate LLM response",
+            }),
+            meta: null,
+            status: "INTERNAL_SERVER_ERROR",
+          });
         }
         const { isNew, messages } = prepareChatDataResult.data;
       },
